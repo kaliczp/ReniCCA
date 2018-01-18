@@ -104,7 +104,32 @@ library(CCP)
 
 N <- dim(fajlistaP10) [1] ##megfigyelések száma
 p <- dim(fajlistaP10) [2] ##függő változók száma
+envP10_scale <- read.csv("envP10_scale.csv", sep=";")
 q <- dim(envP10_scale) [2] ##független változók száma
 
 cancorP <- cancor(fajlistaP10, envP10_scale, xcenter=TRUE, ycenter = FALSE)$cor
 p.asym(cancorP, N, p, q, tstat = "Wilks")
+
+CCorA(envP10_scale, fajlistaP10)
+## https://stackoverflow.com/questions/5850763/canonical-correlation-analysis-in-r
+
+## In R, the base package provides the function cancor() to enable
+## CCA. This is limited to cases where the number of observations is
+## greater than the number of variables (features), nrow(X) > ncol(X).
+
+cc(fajlistaP10, envP10_scale)
+cc(fajlistaP10[,-c(23,24,25,26,27,28,29,30,31)], envP10_scale)
+
+tst <- cc(fajlistaP10[,1:10], envP10_scale)$cor
+p.asym(tst, N, 10, q, tstat = "Wilks")
+
+ttmp <- cor(fajlistaP10)
+colnames(ttmp) <- NULL
+rownames(ttmp) <- NULL
+heatmap(ttmp,scale="none",Rowv=NA,Colv=NA)
+fajlistaP10[,c(4,15)]
+fajlistaP10[,c(23,29)]
+
+N > p+q+1
+correl <- matcor(fajlistaP10, envP10_scale)
+img.matcor(correl, type = 2)
